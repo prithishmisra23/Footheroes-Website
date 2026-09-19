@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { type ComponentProps, type ComponentType, useEffect, useMemo, useState } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer } from "react-leaflet";
 import { MapPin, ShieldCheck } from "lucide-react";
 
@@ -14,6 +14,23 @@ interface VenueMapProps {
 }
 
 const INDIA_CENTER: [number, number] = [22.5937, 78.9629];
+
+// React Leaflet 4 supports these Leaflet props at runtime, but its bundled
+// declarations omit them. Keep the bridge local instead of weakening the
+// project's TypeScript settings.
+const LeafletMapContainer = MapContainer as unknown as ComponentType<
+  ComponentProps<typeof MapContainer> & {
+    center: [number, number];
+    zoom: number;
+    scrollWheelZoom: boolean;
+  }
+>;
+const LeafletTileLayer = TileLayer as unknown as ComponentType<
+  ComponentProps<typeof TileLayer> & { subdomains: string[] }
+>;
+const LeafletCircleMarker = CircleMarker as unknown as ComponentType<
+  ComponentProps<typeof CircleMarker> & { center: [number, number]; radius: number }
+>;
 
 export function VenueMap({ venues, selectedVenueId, heightClassName = "h-[420px]" }: VenueMapProps) {
   const [isMounted, setIsMounted] = useState(false);
@@ -43,8 +60,8 @@ export function VenueMap({ venues, selectedVenueId, heightClassName = "h-[420px]
 
   return (
     <div className={`overflow-hidden rounded-[1.75rem] border border-white/10 shadow-card ${heightClassName}`}>
-      <MapContainer center={center} zoom={selectedVenueId ? 11 : 5} scrollWheelZoom={false} className="h-full w-full">
-        <TileLayer
+      <LeafletMapContainer center={center} zoom={selectedVenueId ? 11 : 5} scrollWheelZoom={false} className="h-full w-full">
+        <LeafletTileLayer
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
           subdomains={["a", "b", "c", "d"]}
         />
@@ -52,7 +69,7 @@ export function VenueMap({ venues, selectedVenueId, heightClassName = "h-[420px]
         {venues.map((venue) => {
           const isSelected = venue.id === selectedVenueId;
           return (
-            <CircleMarker
+            <LeafletCircleMarker
               key={venue.id}
               center={[venue.lat, venue.lng]}
               radius={isSelected ? 12 : 9}
@@ -95,10 +112,10 @@ export function VenueMap({ venues, selectedVenueId, heightClassName = "h-[420px]
                   </Link>
                 </div>
               </Popup>
-            </CircleMarker>
+            </LeafletCircleMarker>
           );
         })}
-      </MapContainer>
+      </LeafletMapContainer>
     </div>
   );
 }

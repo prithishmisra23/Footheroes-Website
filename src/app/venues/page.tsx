@@ -1,14 +1,19 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Filter, MapPin, Search, ShieldCheck, Sparkles, X } from "lucide-react";
 
 import { VenueCard } from "@/components/venue/VenueCard";
-import { VenueMap } from "@/components/venues/VenueMap";
 import { mockMatches } from "@/mock/matches";
 import { mockVenues } from "@/mock/venues";
+
+const VenueMap = dynamic(
+  () => import("@/components/venues/VenueMap").then((module) => module.VenueMap),
+  { ssr: false, loading: () => <div className="h-[420px] animate-pulse rounded-[1.75rem] bg-surface/70" /> }
+);
 
 const surfaceOptions = ["All", "Artificial Turf", "Natural Grass"];
 const facilityOptions = ["Floodlights", "Parking", "Stands", "Locker Rooms", "Changing Rooms", "Medical Room"];

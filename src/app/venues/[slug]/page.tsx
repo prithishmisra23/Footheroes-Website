@@ -1,16 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { ArrowLeft, CalendarDays, MapPin, Navigation, ShieldCheck, Sparkles, Trophy, Users } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { Badge } from "@/components/ui/Badge";
-import { VenueMap } from "@/components/venues/VenueMap";
 import { mockMatches } from "@/mock/matches";
 import { mockTeams } from "@/mock/teams";
 import { mockTournaments } from "@/mock/tournaments";
 import { mockVenues } from "@/mock/venues";
+
+const VenueMap = dynamic(
+  () => import("@/components/venues/VenueMap").then((module) => module.VenueMap),
+  { ssr: false, loading: () => <div className="h-[360px] animate-pulse rounded-[1.75rem] bg-surface/70" /> }
+);
 
 const formatMatchDate = (date: string) =>
   new Date(date).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
