@@ -1,0 +1,103 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #f7f4ee;
+  --surface: #ffffff;
+  --card: #ffffff;
+  --primary: #f75a0a;
+  --primary-dark: #d94801;
+  --accent: #ffd166;
+  --secondary: #171717;
+  --danger: #ef4444;
+  --warning: #f97316;
+  --text: #171717;
+  --text-muted: #6b6962;
+  --border: #dedad2;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    background: var(--bg);
+  }
+
+  ::selection {
+    background: var(--primary);
+    color: #ffffff;
+  }
+
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f7f4ee;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 999px;
+  }
+
+  * {
+    border-color: var(--border);
+  }
+}
+
+body {
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a,
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.leaflet-container {
+  background: #08111f;
+  font-family: var(--font-inter), sans-serif;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: rgba(10, 22, 40, 0.96);
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+}
+
+.leaflet-popup-content {
+  margin: 0;
+}
+
+.leaflet-control-zoom a {
+  background: rgba(17, 29, 53, 0.94);
+  color: var(--text);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+.leaflet-control-attribution {
+  display: none;
+}
+
+@layer utilities {
+  .pitch-grid {
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.08) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  .section-shell {
+    @apply rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-800 dark:bg-gray-900;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+}
