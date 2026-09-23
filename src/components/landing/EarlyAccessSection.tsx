@@ -2,20 +2,24 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle2, ArrowRight } from "lucide-react";
+import { CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
+import { registerForEarlyAccess } from "@/app/actions/register";
 
 export function EarlyAccessSection() {
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [role, setRole] = useState("Player");
   const [formData, setFormData] = useState({ name: "", email: "", phone: "" });
   const [errors, setErrors] = useState({ name: "", email: "" });
 
-  function submit(event: React.FormEvent<HTMLFormElement>) {
+  async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     
     // Basic Validation
     let newErrors = { name: "", email: "" };
     let isValid = true;
+    setSubmitError("");
 
     if (!formData.name.trim()) {
       newErrors.name = "Name is required.";
@@ -33,7 +37,20 @@ export function EarlyAccessSection() {
     setErrors(newErrors);
 
     if (isValid) {
-      setSubmitted(true);
+      setIsSubmitting(true);
+      
+      const response = await registerForEarlyAccess({
+        ...formData,
+        role,
+      });
+
+      setIsSubmitting(false);
+
+      if (response.success) {
+        setSubmitted(true);
+      } else {
+        setSubmitError(response.error || "Something went wrong.");
+      }
     }
   }
 
@@ -171,9 +188,26 @@ export function EarlyAccessSection() {
                       </div>
                     </div>
                     
-                    <button className="w-full rounded-xl bg-[#F75A0A] py-4 font-bold text-white transition-colors hover:bg-[#D94801] flex items-center justify-center gap-2 mt-4">
-                      Join Early Access <ArrowRight size={18} />
+                    <button 
+                      disabled={isSubmitting}
+                      className="w-full rounded-xl bg-[#F75A0A] py-4 font-bold text-white transition-colors hover:bg-[#D94801] flex items-center justify-center gap-2 mt-4 disabled:opacity-70 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="animate-spin" size={18} /> Processing...
+                        </>
+                      ) : (
+                        <>
+                          Join Early Access <ArrowRight size={18} />
+                        </>
+                      )}
                     </button>
+                    
+                    {submitError && (
+                      <div className="mt-4 text-center text-sm font-bold text-red-500 bg-red-500/10 py-3 rounded-lg border border-red-500/20">
+                        {submitError}
+                      </div>
+                    )}
                   </form>
                 </motion.div>
               )}
